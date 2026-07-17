@@ -1,0 +1,723 @@
+/* style.css */
+
+/* カラー変数定義 - 洗練されたダーク＆ネオンテーマ */
+:root {
+  --bg-color: #080b10;
+  --panel-bg: rgba(16, 20, 30, 0.75);
+  --panel-border: rgba(255, 255, 255, 0.06);
+  --primary-color: #00f0ff; /* ネオンブルー */
+  --primary-glow: rgba(0, 240, 255, 0.35);
+  --secondary-color: #bd00ff; /* ネオンマゼンタ/パープル */
+  --secondary-glow: rgba(189, 0, 255, 0.35);
+  --success-color: #39ff14; /* ネオングリーン */
+  --success-glow: rgba(57, 255, 20, 0.3);
+  --error-color: #ff2a5f; /* ネオンレッド/ピンク */
+  --error-glow: rgba(255, 42, 95, 0.4);
+  
+  --font-title: 'Outfit', 'Inter', 'Noto Sans JP', sans-serif;
+  --font-body: 'Inter', 'Noto Sans JP', sans-serif;
+}
+
+/* 全体の初期設定 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: #e2e8f0;
+  font-family: var(--font-body);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+
+/* 背景用の有機的ネオングロウ (奥行きの演出) */
+.glow-sphere {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(140px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.12;
+  transition: all 0.5s ease;
+}
+
+.sphere-1 {
+  width: 500px;
+  height: 500px;
+  background: var(--primary-color);
+  top: -10%;
+  left: -5%;
+}
+
+.sphere-2 {
+  width: 600px;
+  height: 600px;
+  background: var(--secondary-color);
+  bottom: -15%;
+  right: -5%;
+}
+
+/* メインコンテナ */
+.game-container {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 28px;
+  padding: 45px;
+  width: 90%;
+  max-width: 780px;
+  height: 540px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* ミス時の赤枠ネオンフラッシュ */
+@keyframes miss-shake-glow {
+  0% {
+    border-color: var(--error-color);
+    box-shadow: 0 0 35px var(--error-glow), 0 24px 60px rgba(0, 0, 0, 0.4);
+    transform: translateX(0);
+  }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(3px); }
+  100% {
+    border-color: var(--panel-border);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+    transform: translateX(0);
+  }
+}
+
+.game-container.miss-flash {
+  animation: miss-shake-glow 0.35s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+/* 画面のフェード表示切り替え */
+.screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  animation: screenFadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.screen.active {
+  display: flex;
+}
+
+@keyframes screenFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ========================================== */
+/* 1. スタート画面 (IDLE)                     */
+/* ========================================== */
+.brand {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.logo {
+  font-family: var(--font-title);
+  font-weight: 800;
+  font-size: 3.8rem;
+  letter-spacing: 3px;
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  line-height: 1.1;
+}
+
+.logo-accent {
+  color: var(--primary-color);
+  text-shadow: 0 0 20px var(--primary-glow);
+}
+
+.tagline {
+  font-size: 1.1rem;
+  font-weight: 300;
+  color: rgba(226, 232, 240, 0.55);
+  margin-top: 8px;
+  letter-spacing: 2px;
+}
+
+.rules-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 20px;
+  padding: 24px 30px;
+  max-width: 520px;
+  margin-bottom: 35px;
+  box-shadow: inset 0 2px 10px rgba(255, 255, 255, 0.01);
+}
+
+.rules-title {
+  font-family: var(--font-title);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 12px;
+  letter-spacing: 1.5px;
+  text-align: center;
+}
+
+.rules-list {
+  list-style: none;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: rgba(226, 232, 240, 0.75);
+}
+
+.rules-list li {
+  margin-bottom: 8px;
+  position: relative;
+  padding-left: 22px;
+}
+
+.rules-list li::before {
+  content: "▶";
+  font-size: 0.65rem;
+  color: var(--primary-color);
+  position: absolute;
+  left: 2px;
+  top: 1px;
+}
+
+/* ボタンデザイン */
+.btn {
+  font-family: var(--font-title);
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  padding: 16px 42px;
+  border-radius: 32px;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 240, 255, 0.3), 0 12px 30px rgba(189, 0, 255, 0.2);
+}
+
+.btn-primary:active {
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  color: var(--primary-color);
+}
+
+.btn-secondary:hover {
+  background: var(--primary-color);
+  color: #080b10;
+  box-shadow: 0 8px 25px var(--primary-glow);
+  transform: translateY(-3px);
+}
+
+.btn-secondary:active {
+  transform: translateY(-1px);
+}
+
+/* ========================================== */
+/* 2. ゲームプレイ画面 (PLAYING)              */
+/* ========================================== */
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 35px;
+}
+
+.stat-box {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 110px;
+}
+
+.timer-box {
+  border-color: rgba(0, 240, 255, 0.2);
+}
+
+.stat-label {
+  font-size: 0.72rem;
+  letter-spacing: 1.5px;
+  color: rgba(226, 232, 240, 0.4);
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.stat-number {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 1.9rem;
+  color: #ffffff;
+}
+
+/* タイムリミットが少ない時の警告アニメーション */
+.timer-box .stat-number.warning {
+  color: var(--error-color);
+  text-shadow: 0 0 15px var(--error-glow);
+  animation: text-pulse 0.9s infinite alternate;
+}
+
+@keyframes text-pulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.12); }
+}
+
+.stats-group {
+  display: flex;
+  gap: 15px;
+}
+
+.correct-text {
+  color: var(--success-color);
+  text-shadow: 0 0 15px var(--success-glow);
+}
+
+.miss-text {
+  color: var(--error-color);
+  text-shadow: 0 0 15px var(--error-glow);
+}
+
+/* 問題パネル */
+.word-card {
+  width: 100%;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.025);
+  border-radius: 24px;
+  padding: 45px 30px;
+  margin-bottom: 35px;
+  box-shadow: inset 0 4px 30px rgba(0, 0, 0, 0.15);
+}
+
+.jp-word {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 24px;
+  letter-spacing: 1.5px;
+}
+
+.romaji-box {
+  font-family: var(--font-title);
+  font-size: 1.9rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
+/* ローマ字のスタイル区分 */
+.char-typed {
+  color: var(--primary-color);
+  text-shadow: 0 0 12px var(--primary-glow);
+}
+
+/* 現在入力すべき文字（アンダーライン＆ソフトバックグラウンド） */
+.char-current {
+  color: #ffffff;
+  border-bottom: 3px solid var(--primary-color);
+  background: rgba(0, 240, 255, 0.08);
+  animation: caret-blink 0.8s infinite alternate;
+}
+
+@keyframes caret-blink {
+  0% { background: rgba(0, 240, 255, 0.04); }
+  100% { background: rgba(0, 240, 255, 0.18); }
+}
+
+.char-remaining {
+  color: rgba(226, 232, 240, 0.22);
+}
+
+.keyboard-hint {
+  font-size: 0.8rem;
+  color: rgba(226, 232, 240, 0.35);
+  letter-spacing: 1px;
+}
+
+/* ========================================== */
+/* 3. リザルト画面 (COMPLETED)                */
+/* ========================================== */
+.result-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.result-title {
+  font-family: var(--font-title);
+  font-weight: 800;
+  font-size: 2.3rem;
+  letter-spacing: 3px;
+  background: linear-gradient(90deg, #ffffff, var(--primary-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
+}
+
+.result-subtitle {
+  font-size: 0.95rem;
+  color: rgba(226, 232, 240, 0.45);
+  margin-top: 6px;
+  letter-spacing: 1px;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  width: 100%;
+  max-width: 640px;
+  margin-bottom: 35px;
+}
+
+.result-card {
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 18px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.result-card-label {
+  font-size: 0.78rem;
+  color: rgba(226, 232, 240, 0.45);
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.result-card-value {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 2.3rem;
+  color: #ffffff;
+}
+
+.text-glow-blue {
+  color: var(--primary-color);
+  text-shadow: 0 0 15px var(--primary-glow);
+}
+
+.text-glow-green {
+  color: var(--success-color);
+  text-shadow: 0 0 15px var(--success-glow);
+}
+
+.details-value {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-title);
+  font-weight: 600;
+  font-size: 1.6rem;
+}
+
+.slash {
+  color: rgba(226, 232, 240, 0.25);
+  font-weight: 300;
+  margin: 0 2px;
+}
+/* ========================================== */
+/* 4. 設定・問題管理モーダル                 */
+/* ========================================== */
+
+/* スタート画面右下の隠し設定ボタン */
+.btn-settings-hidden {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  background: transparent;
+  border: none;
+  color: rgba(226, 232, 240, 0.15);
+  font-size: 1.1rem;
+  cursor: pointer;
+  z-index: 10;
+  transition: color 0.3s ease, transform 0.3s ease;
+  outline: none;
+}
+
+.btn-settings-hidden:hover {
+  color: rgba(0, 240, 255, 0.4);
+  transform: rotate(45deg);
+}
+
+/* モーダル全体のオーバーレイ */
+.modal {
+  display: none; /* 初期状態は非表示 */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(8, 11, 16, 0.85);
+  backdrop-filter: blur(12px);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modal.active {
+  display: flex;
+  opacity: 1;
+}
+
+/* モーダルコンテンツ */
+.modal-content {
+  background: rgba(18, 24, 38, 0.95);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  box-shadow: 0 20px 50px rgba(0, 240, 255, 0.15), inset 0 2px 10px rgba(255, 255, 255, 0.02);
+  border-radius: 24px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalSlideIn {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* モーダルヘッダー */
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title {
+  font-family: var(--font-title);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  letter-spacing: 1px;
+}
+
+.btn-close {
+  background: transparent;
+  border: none;
+  color: rgba(226, 232, 240, 0.4);
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.btn-close:hover {
+  color: var(--error-color);
+}
+
+/* モーダルボディ */
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.settings-section {
+  margin-bottom: 24px;
+}
+
+.settings-section h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: rgba(226, 232, 240, 0.7);
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+
+/* フォーム関連 */
+.form-group {
+  margin-bottom: 12px;
+  width: 100%;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  color: rgba(226, 232, 240, 0.55);
+  margin-bottom: 6px;
+  display: block;
+}
+
+.form-group input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 10px 14px;
+  color: #ffffff;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus {
+  border-color: rgba(0, 240, 255, 0.5);
+}
+
+.form-group input::placeholder {
+  color: rgba(226, 232, 240, 0.25);
+}
+
+.inline-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.inline-group label {
+  margin-bottom: 0;
+  white-space: nowrap;
+}
+
+.inline-group input {
+  max-width: 100px;
+  text-align: center;
+}
+
+/* 問題追加フォームの横並び */
+.add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-sm {
+  padding: 10px 24px;
+  font-size: 0.85rem;
+  border-radius: 12px;
+  width: 100%;
+}
+
+/* 警告ボックス */
+.warning-box {
+  background: rgba(255, 0, 110, 0.08);
+  border: 1px solid rgba(255, 0, 110, 0.25);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: var(--error-color);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.warning-box.hidden {
+  display: none;
+}
+
+/* 登録問題一覧リスト */
+.questions-list-wrapper {
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.questions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.questions-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+  font-size: 0.88rem;
+}
+
+.questions-list li:last-child {
+  border-bottom: none;
+}
+
+.q-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.q-text {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.q-kana {
+  font-size: 0.75rem;
+  color: rgba(226, 232, 240, 0.45);
+}
+
+.btn-delete {
+  background: transparent;
+  border: none;
+  color: rgba(255, 0, 110, 0.6);
+  cursor: pointer;
+  font-size: 0.82rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-delete:hover {
+  color: var(--error-color);
+  background: rgba(255, 0, 110, 0.1);
+}

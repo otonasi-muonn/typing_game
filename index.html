@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ネオンタイピング - IT用語タイピングゲーム</title>
+  <!-- Google Fonts: Outfit, Inter, Noto Sans JP -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+JP:wght@400;700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="game-container" class="game-container">
+    <!-- 背景装飾用のネオングロウ効果 -->
+    <div class="glow-sphere sphere-1"></div>
+    <div class="glow-sphere sphere-2"></div>
+    
+    <!-- 1. スタート画面 (IDLE) -->
+    <div id="screen-idle" class="screen screen-idle active">
+      <div class="brand">
+        <h1 class="logo">ネオン<span class="logo-accent">タイピング</span></h1>
+        <p class="tagline">IT用語タイピングチャレンジ</p>
+      </div>
+
+      <div class="rules-card">
+        <h2 class="rules-title">遊び方</h2>
+        <ul class="rules-list">
+          <li>IT関連用語がランダムに <strong>10問</strong> 出題されます。</li>
+          <li>10問クリアするまでの時間を競う <strong>タイムトライアル</strong> です。</li>
+          <li>最初の正しいキーを入力すると、タイマーが開始します。</li>
+          <li>一般的なローマ字入力の揺れ（「し」→ si/shi、「つ」→ tu/tsu 等）を自動判定します。</li>
+        </ul>
+      </div>
+
+      <button id="btn-start" class="btn btn-primary">ゲームスタート</button>
+      <!-- 右下の目立たない管理者用隠し設定ボタン -->
+      <button id="btn-open-settings" class="btn-settings-hidden" title="設定">⚙</button>
+    </div>
+
+    <!-- 2. ゲームプレイ画面 (PLAYING) -->
+    <div id="screen-playing" class="screen screen-playing">
+      <!-- 進行ヘッダー -->
+      <div class="game-header">
+        <div class="stat-box timer-box">
+          <span class="stat-label">タイム</span>
+          <span id="timer-value" class="stat-number">0.00</span>
+        </div>
+        
+        <div class="stats-group">
+          <div class="stat-box">
+            <span class="stat-label">クリア数</span>
+            <span id="cleared-value" class="stat-number">0/10</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">正解数</span>
+            <span id="correct-value" class="stat-number correct-text">0</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">ミス数</span>
+            <span id="miss-value" class="stat-number miss-text">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- タイピングワードエリア -->
+      <div class="word-card">
+        <div id="question-text" class="jp-word">日本語ワード</div>
+        <div class="romaji-box">
+          <!-- 判定エンジンによって、入力済み(typed)・入力中(current)・未入力(remaining)に分割される -->
+          <span id="romaji-typed" class="char-typed"></span><span id="romaji-current" class="char-current"></span><span id="romaji-remaining" class="char-remaining"></span>
+        </div>
+      </div>
+
+      <div class="keyboard-hint">
+        <p>キーボードを直接タイピングしてください</p>
+      </div>
+    </div>
+
+    <!-- 3. リザルト画面 (COMPLETED) -->
+    <div id="screen-completed" class="screen screen-completed">
+      <div class="result-header">
+        <h1 class="result-title">クリア！</h1>
+        <p class="result-subtitle">今回のタイピング結果</p>
+      </div>
+
+      <div class="results-grid">
+        <div class="result-card time-card">
+          <span class="result-card-label">タイム (秒)</span>
+          <span id="res-time" class="result-card-value text-glow-blue">0.00秒</span>
+        </div>
+
+        <div class="result-card sps-card">
+          <span class="result-card-label">秒間打鍵数 (SPS)</span>
+          <span id="res-sps" class="result-card-value text-glow-blue">0.00</span>
+        </div>
+        
+        <div class="result-card accuracy-card">
+          <span class="result-card-label">正確率</span>
+          <span id="res-accuracy" class="result-card-value text-glow-green">0%</span>
+        </div>
+
+        <div class="result-card correct-card">
+          <span class="result-card-label">正解数</span>
+          <span id="res-correct" class="result-card-value correct-text">0</span>
+        </div>
+
+        <div class="result-card miss-card">
+          <span class="result-card-label">ミス数</span>
+          <span id="res-miss" class="result-card-value miss-text">0</span>
+        </div>
+
+        <div class="result-card cleared-card">
+          <span class="result-card-label">クリア問題数</span>
+          <span id="res-cleared" class="result-card-value">0</span>
+        </div>
+      </div>
+
+      <button id="btn-restart" class="btn btn-secondary">もう一度遊ぶ</button>
+    </div>
+
+    <!-- 4. 設定・問題管理モーダル -->
+    <div id="modal-settings" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">設定・問題管理</h2>
+          <button id="btn-close-settings" class="btn-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <!-- 警告表示エリア -->
+          <div id="settings-warning" class="warning-box hidden"></div>
+
+          <!-- 出題数設定 -->
+          <div class="settings-section">
+            <h3>出題設定</h3>
+            <div class="form-group inline-group">
+              <label for="input-question-limit">出題問題数 (問):</label>
+              <input type="number" id="input-question-limit" min="1" value="10">
+            </div>
+          </div>
+
+          <!-- 新規問題の追加 -->
+          <div class="settings-section">
+            <h3>新規問題の追加</h3>
+            <div class="add-form">
+              <div class="form-group">
+                <input type="text" id="input-new-text" placeholder="表示日本語 (例: バグ)">
+              </div>
+              <div class="form-group">
+                <input type="text" id="input-new-kana" placeholder="よみがな・ひらがなのみ (例: ばぐ)">
+              </div>
+              <button id="btn-add-question" class="btn btn-primary btn-sm">追加</button>
+            </div>
+          </div>
+
+          <!-- 問題一覧と削除 -->
+          <div class="settings-section">
+            <h3>登録問題一覧 (<span id="questions-count">0</span>件)</h3>
+            <div class="questions-list-wrapper">
+              <ul id="settings-questions-list" class="questions-list">
+                <!-- JSで動的に追加されます -->
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ゲームJavaScriptの読み込み -->
+  <script src="js/game.js"></script>
+</body>
+</html>
