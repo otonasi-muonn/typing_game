@@ -2,7 +2,7 @@
 
 IT用語を題材にした、ブラウザで動くタイムトライアル形式の日本語タイピングゲームです。ダークテーマ×ネオン調のデザインで、10問クリアまでのタイムを競います。
 
-🎮 公開ページ: `https://<GitHubユーザー名>.github.io/typing_game/`（GitHub Pagesで公開した場合）
+🎮 公開ページ: `https://otonasi-muonn.github.io/typing_game/`
 
 ## 概要
 
